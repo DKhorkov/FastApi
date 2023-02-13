@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Body
+from typing import Dict
 
 """https://www.youtube.com/watch?v=AXYgXpHJhBA&list=PLaED5GKTiQG8GW5Rv2hf3tRS-d9t9liUt&index=3"""
 
@@ -17,12 +18,14 @@ async def post_number(number_id: int, q: str = 'Query is empty'):
     return {'number_id': number_id, 'query': q}
 
 
-"""Чтобы отправить тело запроса на сервер, например, необходимо создать схему модели"""
+"""Чтобы отправить тело запроса на сервер, например, необходимо создать схему модели
+
+Для вывода класса модели в теле ответа необходимо использовать приравнение параметра метода к Body(..., embed=True)"""
 from .base_api_models import Animal
 
 
 @app.post('/post_animal')
-async def post_animal(animal: Animal):
+async def post_animal(animal: Animal = Body(..., embed=True)):
     return {'name': animal.name, 'species': animal.species, 'age': animal.age, 'birthday': animal.birthday,
             'relatives': animal.relatives}
 
@@ -64,3 +67,55 @@ async def get_enum_animals(enum_animals: EnumAnimals):
                       'Chicken': 'Chicken has 2 legs and feathers!',
                       'Crocodile': 'Crocodile has 4 legs and tail, and very huge and dangerous teeth!'}
     return {'Animal': enum_animals, 'Feature': features[enum_animals.value]}
+
+
+"""Чтобы масштабировать тело ответа, можно использовать несколько моделей.
+
+Также помимо валидации входных данных на их тип можно писать собственную валидацию (см. модель Master)"""
+from .base_api_models import Master
+
+
+@app.post('/post_multiple_body')
+def post_multiple_body(animal: Animal = Body(..., embed=True), master: Master = Body(..., embed=True)):
+    return {'animal': animal, 'master': master}
+
+
+"""Работа с телом ответа и response_model:
+
+Для примеры была создана модель Friends с заданными по умолчанию значениями.
+
+Для отображения данных, которые отдаст сервер необходимо указать в методе response_model.
+
+response_model_exclude_unset=True - уберет из тела ответа все параметры, которые были указаны по умолчанию в модели,
+даже если им были переданы значения в request.
+
+response_model_exclude={'ages'} - работает по аналогии с response_model_exclude_unset, но удаляет только указанные.
+
+response_model_include является противоположность response_model_exclude и вернет ТОЛЬКО указанные данные.
+"""
+from .base_api_models import Friends
+
+
+@app.post('/friends', response_model=Friends, response_model_exclude={'ages'})
+def post_friends(friends: Friends = Body(..., embed=True, description='Friends and their ages')):
+    return {'friends': friends}
+
+
+"""
+Можно принимать одну модель на вход и возвращать другую на выход. Например, на вход мы принимаем BookIn, а на выходе
+возвращаем BookOut, который уже имеет id книги в книжном магазине
+
+Но, в данном случае, мы не можем просто вернуть {'book': book}, поскольку у данной модели нет атрибута id_in_shop.
+Для этого применим метод перевода модели в словарь и добавим ей значение атрибута id_in_shop
+
+return BookOut(**book_in.dict(), id_in_shop=3) - аналог того, что ниже, но короче и удобнее (синтаксический сахар):
+                        book = book_in.dict()
+                        book['id_in_shop'] = 3
+                        return book
+"""
+from .base_api_models import BookIn, BookOut
+
+
+@app.post('/book', response_model=BookOut)
+def post_book(book_in: BookIn):
+    return BookOut(**book_in.dict(), id_in_shop=3)
