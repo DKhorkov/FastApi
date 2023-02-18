@@ -1,2 +1,5 @@
 .idea/
-Learning/__pycache__/
+Learning/base_api/__pycache__/
+Learning/task_manager/__pycache__/
+Learning/task_manager/task_manager.db
+Learning/task_manager/database/__pycache__/
