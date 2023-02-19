@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> Current datetime </title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+</head>
+<body>
+<p id='date'>Current datetime: </p>
+<script>
+    var ws = new WebSocket("ws://localhost:8090/ws");
+    ws.onmessage = function(event) {
+        var date = document.getElementById('date')
+        var content = document.createTextNode(event.data)
+        var nodes_len = date.childNodes
+        if ( nodes_len.length == 1) {
+            date.appendChild(content);
+        } else {
+            var last_node = date.lastChild
+            date.replaceChild(content, last_node)
+        }
+    };
+</script>
+</body>
+</html>

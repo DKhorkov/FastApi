@@ -17,7 +17,7 @@ task_manager = FastAPI()
 
 
 @task_manager.get("/", name='home', response_class=HTMLResponse)
-def home_page(request: Request, session: Session = Depends(db.get_session)):
+async def home_page(request: Request, session: Session = Depends(db.get_session)):
     """
         Функция получает все созданные заявки и возвращает отрисованный HTML шаблон с данными заявками.
 
@@ -36,8 +36,8 @@ def home_page(request: Request, session: Session = Depends(db.get_session)):
 
 
 @task_manager.post("/add", name='add', response_class=RedirectResponse)
-def home_page(title: str = Form(..., description="Укажите описание заявки"),
-              session: Session = Depends(db.get_session)):
+async def home_page(title: str = Form(..., description="Укажите описание заявки"),
+                    session: Session = Depends(db.get_session)):
     """
         Функция получает название новой заявки, создает экземлпяр модели заявки и созраняет заявку в базу данных.
         Переадресовывает на домашнюю страницу.
@@ -55,7 +55,7 @@ def home_page(title: str = Form(..., description="Укажите описани�
 
 
 @task_manager.get('/update/{task_id}', name='update', response_class=RedirectResponse)
-def update(task_id: int, session: Session = Depends(db.get_session)):
+async def update(task_id: int, session: Session = Depends(db.get_session)):
     """
         Функция получает идентификационный номер заявки, находит ее и меняет статус на противпомоложный от того,
         который был.
@@ -74,7 +74,7 @@ def update(task_id: int, session: Session = Depends(db.get_session)):
 
 
 @task_manager.get('/delete/{task_id}', name='delete', response_class=RedirectResponse)
-def delete(task_id: int, session: Session = Depends(db.get_session)):
+async def delete(task_id: int, session: Session = Depends(db.get_session)):
     """
         Функция получает идентификационный номер заявки, находит ее и удаляет.
 
@@ -97,4 +97,4 @@ task_manager.mount(path='/static',
 templates = Jinja2Templates(directory='./templates/task_manager')  # Указываем, где будут лежать наши HTML шаблоны
 
 if __name__ == '__main__':
-    uvicorn.run("main:task_manager", host="0.0.0.0", port=os.getenv("PORT", default=8090), log_level="info")
+    uvicorn.run("main:task_manager", host="0.0.0.0", port=os.getenv("PORT", default=8080), log_level="info")

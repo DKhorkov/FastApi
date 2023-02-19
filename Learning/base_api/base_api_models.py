@@ -1,6 +1,6 @@
 from pydantic import BaseModel, validator, Field
 from datetime import date
-from typing import List, Dict
+from typing import List, Dict, Optional
 from enum import Enum
 
 
@@ -29,7 +29,7 @@ class Master(BaseModel):
     Второй способ - Field. Ставим многоточие, чтобы сделать поле обязательным."""
 
     name: str = 'Dmitriy'
-    surname: str = 'Khorkov'
+    surname: Optional[str] = ""  # Делаем поле опциональным, а дефолтное значение пустым
     age: int = 0
     pets: int = Field(...,
                       ge=0,  # Greater than or equal to

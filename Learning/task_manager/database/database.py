@@ -42,7 +42,7 @@ class Alchemy:
                                           autoflush=False,
                                           bind=self.engine)
 
-    def get_session(self):
+    async def get_session(self):
         """Метод создает нам экземпляр сессии и отдает для использования и закрывает сессию по выполнении"""
         session = self.local_session()
         try:
