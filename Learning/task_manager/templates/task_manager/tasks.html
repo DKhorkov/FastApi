@@ -4,6 +4,12 @@
 
 <div style="margin-top: 50px;" class="ui container">
 
+    <nav class="logout">
+        <form class="ui form" action="{{ url_for('start') }}" method="post">
+            <button class="ui teal basic button" type="submit">Выйти</button>
+        </form>
+    </nav>
+
     <h1 class="ui center aligned header green">Управление текущими задачами</h1>
 
     <form class="ui form" action="{{ url_for('add') }}" method="post">
@@ -18,7 +24,7 @@
 
     {% for task in tasks_list %}
     <div class="ui segment">
-        <p class="ui big header">№{{ task.id }} {{ task.title }}</p>
+        <p class="ui big header">Задача: {{ task.title }}</p>
 
         {% if task.is_complete == False %}
         <span class="ui gray label">Не завершено</span>

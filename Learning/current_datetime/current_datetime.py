@@ -23,7 +23,7 @@ async def get_date(request: Request):
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
-        data = datetime.datetime.now().strftime("%Y-%m-%d %H:%m:%S")
+        data = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         await websocket.send_text(data)
         await asyncio.sleep(1)
 

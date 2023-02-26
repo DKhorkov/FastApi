@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div style="margin-top: 50px;" class="ui container">
+
+    <h1 class="ui center aligned header green">Регистрация пользователя</h1>
+
+    <form class="ui form" action="{{ url_for('process_register') }}" method="post">
+      <div class="field">
+        <input type="email" name="email" placeholder="Email"><br>
+      </div>
+      <div class="field">
+        <input type="text" name="username" placeholder="Username"><br>
+      </div>
+      <div class="field">
+        <input type="password" name="password" placeholder="Password"><br>
+      </div>
+        <button class="ui teal basic button" type="submit">Зарегистрироваться</button>
+    </form>
+</div>
+
+{% endblock content %}

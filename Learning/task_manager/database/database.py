@@ -1,52 +1,73 @@
+import datetime
 import os
-from sqlalchemy.orm import declarative_base, sessionmaker
-from sqlalchemy import Column, String, Integer, Boolean
-from sqlalchemy import create_engine
+from typing import AsyncGenerator
+from uuid import uuid4
+
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import Column, String, Integer, Boolean, TIMESTAMP, ForeignKey, DateTime, text, Text
 
 from Learning.task_manager.config import Settings
 
 BASE_DIR = os.path.dirname(os.path.abspath(__name__))  # Определение пути текущего файла
 
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    pass
 
 
 # Определяем модель таблицы базы данных для SQLAlchemy
+class User(Base):
+    __tablename__ = 'user'  # Именовать лучше в единственном числе
+    id = Column(Integer, primary_key=True, nullable=False)
+    username = Column(String, nullable=False)
+    email = Column(String, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    registered_at = Column(TIMESTAMP, default=datetime.datetime.utcnow)
+    is_active = Column(Boolean, default=True, nullable=False)
+
+
 class Task(Base):
-    __tablename__ = 'tasks'
+    __tablename__ = 'task'
     id = Column(Integer, primary_key=True)
-    title = Column(String)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    title = Column(String, nullable=False)
     is_complete = Column(Boolean, default=False)
 
 
-class Alchemy:
+class Token(Base):
+    __tablename__ = 'token'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    token = Column(Text, nullable=False, default=lambda: str(uuid4()).replace('-', ''), unique=True)
+    expires = Column(DateTime, default=False)
 
-    def __init__(self):
-        """
-        echo - информирование об операциях БД в консоль
-        check_same_thread - Для запуска БД не только в основном треде
-        """
-        self.engine = create_engine(Settings(BASE_DIR).db_url,
-                                    connect_args={'check_same_thread': False},
-                                    echo=True)
-        Base.metadata.create_all(bind=self.engine)  # Создаем таблицы
 
-        """
-        Создадим объект локальной сессии, чтобы каждая операция с задачами была независимой и в отдельной сессии. Таким
-        образом, каждый экземлпяр self.local_session будет сеансом БД
-        
-        autocommit=False - Сами будем управлять операциями CRUD в БД
-        autoflush=False - Отключаем доступ к данным, которые еще не сохранены в БД
-        bind=self.engine - Подключаем соединение с нашей базой данных
-        """
-        self.local_session = sessionmaker(autocommit=False,
-                                          autoflush=False,
-                                          bind=self.engine)
+engine = create_async_engine(Settings(BASE_DIR).db_url,
+                             connect_args={'check_same_thread': False},
+                             echo=True)
 
-    async def get_session(self):
-        """Метод создает нам экземпляр сессии и отдает для использования и закрывает сессию по выполнении"""
-        session = self.local_session()
-        try:
-            return session
-        finally:
-            session.close()
+"""
+Создадим объект локальной сессии, чтобы каждая операция с задачами была независимой и в отдельной сессии. Таким
+образом, каждый экземлпяр self.local_session будет сеансом БД
 
+autocommit=False - Сами будем управлять операциями CRUD в БД
+autoflush=False - Отключаем доступ к данным, которые еще не сохранены в БД
+bind=self.engine - Подключаем соединение с нашей базой данных
+"""
+
+async_session_maker = async_sessionmaker(engine,
+                                         autocommit=False,
+                                         autoflush=False,
+                                         expire_on_commit=False)
+
+
+async def create_db_and_tables():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+
+async def get_async_session() -> AsyncSession:
+    """Метод создает нам экземпляр сессии и отдает для использования и закрывает сессию по выполнении"""
+    async with async_session_maker() as session:
+        return session
