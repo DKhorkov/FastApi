@@ -43,31 +43,40 @@ class Token(Base):
     expires = Column(DateTime, default=False)
 
 
-engine = create_async_engine(Settings(BASE_DIR).db_url,
-                             connect_args={'check_same_thread': False},
-                             echo=True)
+engine = create_async_engine(
+    Settings(BASE_DIR).db_url,
+    connect_args={'check_same_thread': False},
+    echo=True
+)
 
 """
-Создадим объект локальной сессии, чтобы каждая операция с задачами была независимой и в отдельной сессии. Таким
-образом, каждый экземлпяр self.local_session будет сеансом БД
-
-autocommit=False - Сами будем управлять операциями CRUD в БД
-autoflush=False - Отключаем доступ к данным, которые еще не сохранены в БД
-bind=self.engine - Подключаем соединение с нашей базой данных
+    Создадим объект локальной сессии, чтобы каждая операция с задачами была независимой и в отдельной сессии. 
+    Таким образом, каждый экземлпяр self.local_session будет сеансом БД
+    
+    autocommit=False - Сами будем управлять операциями CRUD в БД
+    autoflush=False - Отключаем доступ к данным, которые еще не сохранены в БД
+    bind=self.engine - Подключаем соединение с нашей базой данных
 """
 
-async_session_maker = async_sessionmaker(engine,
-                                         autocommit=False,
-                                         autoflush=False,
-                                         expire_on_commit=False)
+async_session_maker = async_sessionmaker(
+    engine,
+    autocommit=False,
+    autoflush=False,
+    expire_on_commit=False
+)
 
 
-async def create_db_and_tables():
+async def create_db_and_tables() -> None:
+    """
+        Метод создает все таблицы для Базы Данных SQlite.
+    """
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
 
 async def get_async_session() -> AsyncSession:
-    """Метод создает нам экземпляр сессии и отдает для использования и закрывает сессию по выполнении"""
+    """
+        Метод создает нам экземпляр сессии и отдает для использования и закрывает сессию по выполнении.
+    """
     async with async_session_maker() as session:
         return session

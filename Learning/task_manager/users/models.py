@@ -4,7 +4,9 @@ from datetime import datetime
 
 
 class RegisterUser(BaseModel):
-    """ Проверяет запрос на регистрацию"""
+    """
+        Проверяет запрос на регистрацию.
+    """
     email: EmailStr
     username: str
     password: str
@@ -24,5 +26,7 @@ class TokenBase(BaseModel):
 
     @validator("token")
     def hexlify_token(cls, value):
-        """ Конвертирует UUID в hex строку """
+        """
+            Конвертирует UUID в hex строку .
+        """
         return value.hex
