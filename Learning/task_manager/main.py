@@ -17,11 +17,11 @@ task_manager.include_router(user_router)
 # Привязываем CSS. StaticFiles необходимо для того, чтобы корректно описать, где наша CSS директория:
 task_manager.mount(
     path='/static',
-    app=StaticFiles(directory='./static/task_manager'),
+    app=StaticFiles(directory='static'),
     name='static'
 )
 
-templates = Jinja2Templates(directory='./templates/task_manager')  # Указываем, где будут лежать наши HTML шаблоны
+templates = Jinja2Templates(directory='/templates/task_manager')  # Указываем, где будут лежать наши HTML шаблоны
 
 if __name__ == '__main__':
     uvicorn.run("main:task_manager", host="0.0.0.0", port=os.getenv("PORT", default=8080), log_level="info")

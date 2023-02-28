@@ -61,6 +61,19 @@ def start_page(request: Request):
     )
 
 
+@user_router.get('/logout', name='logout', response_class=RedirectResponse)
+def logout():
+    """
+        Функция стирает cookies и переадресовывает юзера на стартовую страницу.
+
+        :return: RedirectResponse на стартовую страницу
+    """
+    redirect_url = user_router.url_path_for('start')
+    response = RedirectResponse(url=redirect_url, status_code=HTTP_303_SEE_OTHER)
+    response.delete_cookie(key="access_token", httponly=True)
+    return response
+
+
 @user_router.get('/login', name='login', response_class=HTMLResponse)
 def login(request: Request):
     """

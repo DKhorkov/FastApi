@@ -4,7 +4,7 @@
 
 <div style="margin-top: 50px;" class="ui container">
 
-    <h1 class="ui center aligned header green">Регистрация пользователя</h1>
+    <h1 class="ui center aligned header blue">Регистрация пользователя</h1>
 
     <form class="ui form" action="{{ url_for('process_register') }}" method="post">
       <div class="field">
@@ -16,8 +16,12 @@
       <div class="field">
         <input type="password" name="password" placeholder="Password"><br>
       </div>
-        <button class="ui teal basic button" type="submit">Зарегистрироваться</button>
+        <button class="ui black button" type="submit">Зарегистрироваться</button>
     </form>
+</div>
+
+<div style="margin-top: 15px;" class="ui container">
+    <a class="ui yellow button" href="{{ url_for('start') }}">На главную</a>
 </div>
 
 {% endblock content %}

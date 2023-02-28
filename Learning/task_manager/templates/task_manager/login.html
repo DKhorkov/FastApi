@@ -4,17 +4,21 @@
 
 <div style="margin-top: 50px;" class="ui container">
 
-    <h1 class="ui center aligned header green">Авторизация пользователя</h1>
+    <h1 class="ui center aligned header blue">Авторизация пользователя</h1>
 
-    <form class="ui form" action="http://0.0.0.0:8080/auth" method="post">
+    <form class="ui form" action="{{ url_for('auth') }}" method="post">
       <div class="field">
         <input type="email" name="username" placeholder="Email"><br>
       </div>
       <div class="field">
         <input type="password" name="password" placeholder="Password"><br>
       </div>
-        <button class="ui teal basic button" type="submit">Авторизоваться</button>
+        <button class="ui black button" type="submit">Авторизоваться</button>
     </form>
+</div>
+
+<div style="margin-top: 15px;" class="ui container">
+    <a class="ui yellow button" href="{{ url_for('start') }}">На главную</a>
 </div>
 
 {% endblock content %}

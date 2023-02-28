@@ -1,0 +1,18 @@
+.task{
+    color: yellow;
+    text-align: center;
+}
+
+body{
+    background-color: #dbe3ca;
+    background-image: url("../images/bg_image.jpg");
+    background-repeat: repeat-xy;
+}
+
+.task_div{
+    background-color: #fae1a2;
+    margin-top: 15px;
+    padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
