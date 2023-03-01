@@ -23,5 +23,17 @@ task_manager.mount(
 
 templates = Jinja2Templates(directory='/templates/task_manager')  # Указываем, где будут лежать наши HTML шаблоны
 
+
+def create_logging_folder() -> None:
+    """
+        Функция проверяет, существует ли папка для логов и, если нет, создает ее.
+
+        :return: None
+    """
+    if not os.path.exists('log'):
+        os.mkdir('log')
+
+
 if __name__ == '__main__':
+    create_logging_folder()
     uvicorn.run("main:task_manager", host="0.0.0.0", port=os.getenv("PORT", default=8080), log_level="info")

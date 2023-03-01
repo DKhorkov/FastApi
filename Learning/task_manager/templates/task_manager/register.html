@@ -6,6 +6,12 @@
 
     <h1 class="ui center aligned header blue">Регистрация пользователя</h1>
 
+    {% if user_exists == True %}
+     <div style="margin-top: 15px;" class="ui container">
+         <h3>Пользователь с таким адресом электронной почты уже существует! Пожалуйста, введите другой email!</h3>
+     </div>
+    {% endif %}
+
     <form class="ui form" action="{{ url_for('process_register') }}" method="post">
       <div class="field">
         <input type="email" name="email" placeholder="Email"><br>

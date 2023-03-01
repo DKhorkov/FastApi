@@ -6,6 +6,12 @@
 
     <h1 class="ui center aligned header blue">Авторизация пользователя</h1>
 
+    {% if incorrect_creds == True %}
+     <div style="margin-top: 15px;" class="ui container">
+         <h3>Неправильно указан адрес электронной почты или пароль! Пожалуйста, попробуйте снова!</h3>
+     </div>
+    {% endif %}
+
     <form class="ui form" action="{{ url_for('auth') }}" method="post">
       <div class="field">
         <input type="email" name="username" placeholder="Email"><br>
