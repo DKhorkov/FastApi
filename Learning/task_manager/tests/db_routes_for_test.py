@@ -8,30 +8,23 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from starlette.templating import Jinja2Templates
 
-from Learning.task_manager.database.database import Task, User, create_db_and_tables, get_async_session
+from Learning.task_manager.database.database import get_async_session
 from Learning.task_manager.config import Settings
 from Learning.task_manager.users import get_current_user
+from .session_for_test import TestTask, TestUser
 
 
-logging.basicConfig(format='[%(asctime)s: %(levelname)s] %(message)s', filename="../log/db_logs", filemode='a')
+logging.basicConfig(format='[%(asctime)s: %(levelname)s] %(message)s', filename="../log/test_logs", filemode='a')
 logger = logging.getLogger("")
 logger.setLevel(level=logging.DEBUG)
 
-db_router = APIRouter()
+test_db_router = APIRouter()
 templates = Jinja2Templates(directory='./templates/task_manager')  # Указываем, где будут лежать наши HTML шаблоны
 
 
-@db_router.on_event("startup")
-async def on_startup():
-    """
-        Создаем все таблицы на старте
-    """
-    await create_db_and_tables()
-
-
-@db_router.get("/tasks", name='tasks', response_class=HTMLResponse)
+@test_db_router.get("/test_tasks", name='tasks', response_class=HTMLResponse)
 async def tasks(request: Request, session: AsyncSession = Depends(get_async_session),
-                current_user: User = Depends(get_current_user)):
+                current_user: TestUser = Depends(get_current_user)):
     """
         Функция получает все созданные заявки и возвращает отрисованный HTML шаблон с данными заявками.
 
@@ -43,7 +36,7 @@ async def tasks(request: Request, session: AsyncSession = Depends(get_async_sess
     """
     try:
         async with session as async_session:
-            all_tasks = await async_session.execute(select(Task).filter(Task.user_id == current_user.id))
+            all_tasks = await async_session.execute(select(TestTask).filter(TestTask.user_id == current_user.id))
             all_tasks = all_tasks.scalars()  # Переводим в скалярный вид для доступа к таскам и отрисовки в HTML
 
         return templates.TemplateResponse(
@@ -59,10 +52,10 @@ async def tasks(request: Request, session: AsyncSession = Depends(get_async_sess
         raise HTTPException(status_code=500, detail="Something went wrong")
 
 
-@db_router.post("/add", name='add', response_class=RedirectResponse)
+@test_db_router.post("/test_add", name='add', response_class=RedirectResponse)
 async def add(title: str = Form(..., description="Укажите описание заявки"),
               session: AsyncSession = Depends(get_async_session),
-              current_user: User = Depends(get_current_user)):
+              current_user: TestUser = Depends(get_current_user)):
     """
         Функция получает название новой заявки, создает экземпляр модели заявки и сохраняет заявку в базу данных.
         Переадресовывает на домашнюю страницу.
@@ -74,12 +67,12 @@ async def add(title: str = Form(..., description="Укажите описани�
         :return: Отрисованный HTML, созданный с помощью шаблонизатора Jinja2Templates
     """
     try:
-        new_task = Task(title=title, user_id=current_user.id)
+        new_task = TestTask(title=title, user_id=current_user.id)
         async with session as async_session:
             async_session.add(new_task)
             await async_session.commit()
 
-        home_url = db_router.url_path_for('tasks')
+        home_url = test_db_router.url_path_for('tasks')
         return RedirectResponse(url=home_url, status_code=HTTP_303_SEE_OTHER)
 
     except Exception as e:
@@ -87,9 +80,9 @@ async def add(title: str = Form(..., description="Укажите описани�
         raise HTTPException(status_code=500, detail="Something went wrong")
 
 
-@db_router.get('/update/{task_id}', name='update', response_class=RedirectResponse)
+@test_db_router.get('/test_update/{task_id}', name='update', response_class=RedirectResponse)
 async def update(task_id: int, session: AsyncSession = Depends(get_async_session),
-                 current_user: User = Depends(get_current_user)):
+                 current_user: TestUser = Depends(get_current_user)):
     """
         Функция получает идентификационный номер заявки, находит ее и меняет статус на противоположный от того,
         который был.
@@ -102,7 +95,7 @@ async def update(task_id: int, session: AsyncSession = Depends(get_async_session
     """
     try:
         async with session as async_session:
-            task_to_update = await async_session.execute(select(Task).filter(Task.id == task_id))
+            task_to_update = await async_session.execute(select(TestTask).filter(TestTask.id == task_id))
             task_to_update = task_to_update.scalar()
 
             # Проверка, что таска принадлежит текущему пользователю:
@@ -114,7 +107,7 @@ async def update(task_id: int, session: AsyncSession = Depends(get_async_session
             task_to_update.is_complete = not task_to_update.is_complete
             await async_session.commit()
 
-        url = db_router.url_path_for('tasks')
+        url = test_db_router.url_path_for('tasks')
 
         return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
@@ -123,9 +116,9 @@ async def update(task_id: int, session: AsyncSession = Depends(get_async_session
         raise HTTPException(status_code=500, detail="Something went wrong")
 
 
-@db_router.get('/delete/{task_id}', name='delete', response_class=RedirectResponse)
+@test_db_router.get('/test_delete/{task_id}', name='delete', response_class=RedirectResponse)
 async def delete(task_id: int, session: AsyncSession = Depends(get_async_session),
-                 current_user: User = Depends(get_current_user)):
+                 current_user: TestUser = Depends(get_current_user)):
     """
         Функция получает идентификационный номер заявки, находит ее и удаляет.
 
@@ -137,7 +130,7 @@ async def delete(task_id: int, session: AsyncSession = Depends(get_async_session
     """
     try:
         async with session as async_session:
-            task_to_delete = await async_session.execute(select(Task).filter_by(id=task_id))
+            task_to_delete = await async_session.execute(select(TestTask).filter_by(id=task_id))
             task_to_delete = task_to_delete.scalar()
 
             # Проверка, что таска принадлежит текущему пользователю:
@@ -149,7 +142,7 @@ async def delete(task_id: int, session: AsyncSession = Depends(get_async_session
             await async_session.delete(task_to_delete)
             await async_session.commit()
 
-        url = db_router.url_path_for('tasks')
+        url = test_db_router.url_path_for('tasks')
         return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
     except Exception as e:

@@ -7,3 +7,6 @@ Learning/task_manager/users/__pycache__/
 Learning/current_datetime/__pycache__/current_datetime.cpython-310.pyc
 Learning/task_manager/routers/__pycache__/
 Learning/task_manager/log/
+Learning/task_manager/test_database.db
+Learning/task_manager/tests/__pycache__/
+

@@ -1,11 +1,10 @@
 import datetime
 import os
-from typing import AsyncGenerator
 from uuid import uuid4
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import Column, String, Integer, Boolean, TIMESTAMP, ForeignKey, DateTime, text, Text
+from sqlalchemy import Column, String, Integer, Boolean, TIMESTAMP, ForeignKey, DateTime, Text
 
 from Learning.task_manager.config import Settings
 
