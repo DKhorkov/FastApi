@@ -8,10 +8,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from starlette.templating import Jinja2Templates
 
-from Learning.task_manager.database.database import get_async_session
 from Learning.task_manager.config import Settings
-from Learning.task_manager.users import get_current_user
-from .session_for_test import TestTask, TestUser
+from .user_utils_for_test import get_current_user
+from .session_for_test import TestTask, TestUser, get_test_async_session
 
 
 logging.basicConfig(format='[%(asctime)s: %(levelname)s] %(message)s', filename="../log/test_logs", filemode='a')
@@ -23,7 +22,7 @@ templates = Jinja2Templates(directory='./templates/task_manager')  # Указы�
 
 
 @test_db_router.get("/test_tasks", name='tasks', response_class=HTMLResponse)
-async def tasks(request: Request, session: AsyncSession = Depends(get_async_session),
+async def tasks(request: Request, session: AsyncSession = Depends(get_test_async_session),
                 current_user: TestUser = Depends(get_current_user)):
     """
         Функция получает все созданные заявки и возвращает отрисованный HTML шаблон с данными заявками.
@@ -54,7 +53,7 @@ async def tasks(request: Request, session: AsyncSession = Depends(get_async_sess
 
 @test_db_router.post("/test_add", name='add', response_class=RedirectResponse)
 async def add(title: str = Form(..., description="Укажите описание заявки"),
-              session: AsyncSession = Depends(get_async_session),
+              session: AsyncSession = Depends(get_test_async_session),
               current_user: TestUser = Depends(get_current_user)):
     """
         Функция получает название новой заявки, создает экземпляр модели заявки и сохраняет заявку в базу данных.
@@ -81,7 +80,7 @@ async def add(title: str = Form(..., description="Укажите описани�
 
 
 @test_db_router.get('/test_update/{task_id}', name='update', response_class=RedirectResponse)
-async def update(task_id: int, session: AsyncSession = Depends(get_async_session),
+async def update(task_id: int, session: AsyncSession = Depends(get_test_async_session),
                  current_user: TestUser = Depends(get_current_user)):
     """
         Функция получает идентификационный номер заявки, находит ее и меняет статус на противоположный от того,
@@ -117,7 +116,7 @@ async def update(task_id: int, session: AsyncSession = Depends(get_async_session
 
 
 @test_db_router.get('/test_delete/{task_id}', name='delete', response_class=RedirectResponse)
-async def delete(task_id: int, session: AsyncSession = Depends(get_async_session),
+async def delete(task_id: int, session: AsyncSession = Depends(get_test_async_session),
                  current_user: TestUser = Depends(get_current_user)):
     """
         Функция получает идентификационный номер заявки, находит ее и удаляет.
