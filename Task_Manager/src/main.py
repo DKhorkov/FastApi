@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates  # Шаблонизатор
 
-from routers import user_router, db_router
+from Task_Manager.src.routers import user_router, db_router
 
 task_manager = FastAPI()
 

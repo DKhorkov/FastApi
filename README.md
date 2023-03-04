@@ -13,9 +13,8 @@ INSTALLATION
 Please make sure the release file is unpacked under a Web-accessible
 directory. You shall see the following files and directories:
 
-    Learning/            learning giles, including Task Manager src
+    Task_Manager/        main folder of project with SRC and TESTS
     requirements.txt     requirements
-    pyproject.toml       global pytest settings
     README               this file
     .gitignore           files to ignore
 

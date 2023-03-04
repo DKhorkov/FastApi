@@ -8,6 +8,7 @@ Task_Manager/current_datetime/__pycache__/current_datetime.cpython-310.pyc
 Task_Manager/src/routers/__pycache__/
 Task_Manager/src/log/
 Task_Manager/src/test_database.db
-Task_Manager/src/tests/__pycache__/
+Task_Manager/tests/__pycache__/
 Task_Manager/current_datetime/
 Task_Manager/base_api/
+Task_Manager/tests/.pytest_cache/

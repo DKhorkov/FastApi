@@ -1,5 +1,5 @@
 [tool.pytest.ini_options]
 pythonpath = [
-  ".", "task_manager",
+  ".", "src",
 ]
 asyncio_mode="auto"
