@@ -2,6 +2,7 @@ import hashlib
 import random
 import string
 import logging
+import os
 
 from datetime import datetime, timedelta
 from typing import Optional, Dict
@@ -17,6 +18,17 @@ from Learning.task_manager.database.database import Token, User, get_async_sessi
 from .models import RegisterUser, TokenBase
 
 
+def create_logging_folder() -> None:
+    """
+        Функция проверяет, существует ли папка для логов и, если нет, создает ее.
+
+        :return: None
+    """
+    if not os.path.exists('log'):
+        os.mkdir('log')
+
+
+create_logging_folder()
 logging.basicConfig(format='[%(asctime)s: %(levelname)s] %(message)s', filename='./log/utils_logs', filemode='a')
 logger = logging.getLogger("")
 logger.setLevel(level=logging.DEBUG)
