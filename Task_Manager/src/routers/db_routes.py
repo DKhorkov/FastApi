@@ -8,9 +8,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from starlette.templating import Jinja2Templates
 
-from Learning.task_manager.database.database import Task, User, create_db_and_tables, get_async_session
-from Learning.task_manager.config import Settings
-from Learning.task_manager.users import get_current_user
+from Task_Manager.src.database.database import Task, User, create_db_and_tables, get_async_session
+from Task_Manager.src.config import Settings
+from Task_Manager.src.users import get_current_user
 
 
 logging.basicConfig(format='[%(asctime)s: %(levelname)s] %(message)s', filename="../log/db_logs", filemode='a')

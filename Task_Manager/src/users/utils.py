@@ -14,7 +14,7 @@ from sqlalchemy.future import select
 from starlette.requests import Request
 from starlette.status import HTTP_401_UNAUTHORIZED
 
-from Learning.task_manager.database.database import Token, User, get_async_session
+from Task_Manager.src.database.database import Token, User, get_async_session
 from .models import RegisterUser, TokenBase
 
 

@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 from fastapi import HTTPException, status, Depends
 from sqlalchemy.future import select
 
-from Learning.task_manager.users.models import RegisterUser, TokenBase
-from Learning.task_manager.users.utils import hash_password, get_random_string, OAuth2PasswordBearerWithCookie
+from Task_Manager.src.users.models import RegisterUser, TokenBase
+from Task_Manager.src.users.utils import hash_password, get_random_string, OAuth2PasswordBearerWithCookie
 from .session_for_test import get_test_async_session, TestUser, TestToken
 
 

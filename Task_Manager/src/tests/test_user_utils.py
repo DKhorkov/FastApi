@@ -1,10 +1,10 @@
 from httpx import AsyncClient
 from sqlalchemy.future import select
 
-from Learning.task_manager.users.models import RegisterUser
-from .user_utils_for_test import get_user_by_email, get_user_by_token, get_current_user, create_user_token, \
+from Task_Manager.src.users.models import RegisterUser
+from .user_utils_for_test import get_user_by_email, get_user_by_token, create_user_token, \
     create_user
-from .session_for_test import get_test_async_session, TestToken, TestTask, TestUser
+from .session_for_test import get_test_async_session, TestToken, TestUser
 
 
 async def test_create_user(get_test_async_client: AsyncClient):

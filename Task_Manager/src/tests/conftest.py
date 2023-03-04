@@ -5,8 +5,8 @@ from typing import AsyncGenerator
 from httpx import AsyncClient
 from fastapi.testclient import TestClient
 
-from Learning.task_manager.database.database import get_async_session
-from Learning.task_manager.main import task_manager
+from Task_Manager.src.database.database import get_async_session
+from Task_Manager.src.main import task_manager
 
 from .session_for_test import get_test_async_session, test_engine, TestBase
 from .user_routes_for_test import test_user_router

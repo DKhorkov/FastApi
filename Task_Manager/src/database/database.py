@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import Column, String, Integer, Boolean, TIMESTAMP, ForeignKey, DateTime, Text
 
-from Learning.task_manager.config import Settings
+from Task_Manager.src.config import Settings
 
 BASE_DIR = os.path.dirname(os.path.abspath(__name__))  # Определение пути текущего файла
 

@@ -20,7 +20,7 @@ task_manager.mount(
     name='static'
 )
 
-templates = Jinja2Templates(directory='/templates/task_manager')  # Указываем, где будут лежать наши HTML шаблоны
+templates = Jinja2Templates(directory='/templates/src')  # Указываем, где будут лежать наши HTML шаблоны
 
 
 if __name__ == '__main__':

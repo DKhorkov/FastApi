@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from starlette.templating import Jinja2Templates
 
-from Learning.task_manager.config import Settings
+from Task_Manager.src.config import Settings
 from .user_utils_for_test import get_current_user
 from .session_for_test import TestTask, TestUser, get_test_async_session
 

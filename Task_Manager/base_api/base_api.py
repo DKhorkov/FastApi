@@ -21,7 +21,7 @@ async def post_number(number_id: int, q: str = 'Query is empty'):
 """Чтобы отправить тело запроса на сервер, например, необходимо создать схему модели
 
 Для вывода класса модели в теле ответа необходимо использовать приравнение параметра метода к Body(..., embed=True)"""
-from Learning.base_api.base_api_models import Animal
+from Task_Manager.base_api.base_api_models import Animal
 
 
 @app.post('/post_animal')
@@ -37,7 +37,7 @@ async def post_animal(animal: Animal = Body(..., embed=True)):
 Также можно создать множественный Query как в примере метода get_multiple_numbers()
 
 Если параметр устаревший и в скором времени может быть удален - можно указать для уведомления об этом deprecated=True"""
-from Learning.base_api.base_api_exceptions import InvalidTypeException
+from Task_Manager.base_api.base_api_exceptions import InvalidTypeException
 
 
 @app.get('/get_number')
@@ -58,7 +58,7 @@ async def get_multiple_numbers(q: List[int] = Query(default=..., description="Wr
 
 """Также можно сделать GET метод, в основе которого будет ENUM class. 
 Так пользователь сможет выбирать из атрибутов ENUM """
-from Learning.base_api.base_api_models import EnumAnimals
+from Task_Manager.base_api.base_api_models import EnumAnimals
 
 
 @app.get('/get_enum_animals')
@@ -72,7 +72,7 @@ async def get_enum_animals(enum_animals: EnumAnimals):
 """Чтобы масштабировать тело ответа, можно использовать несколько моделей.
 
 Также помимо валидации входных данных на их тип можно писать собственную валидацию (см. модель Master)"""
-from Learning.base_api.base_api_models import Master
+from Task_Manager.base_api.base_api_models import Master
 
 
 @app.post('/post_multiple_body')
@@ -93,7 +93,7 @@ response_model_exclude={'ages'} - работает по аналогии с resp
 
 response_model_include является противоположность response_model_exclude и вернет ТОЛЬКО указанные данные.
 """
-from Learning.base_api.base_api_models import Friends
+from Task_Manager.base_api.base_api_models import Friends
 
 
 @app.post('/friends', response_model=Friends, response_model_exclude={'ages'})
@@ -113,7 +113,7 @@ return BookOut(**book_in.dict(), id_in_shop=3) - аналог того, что �
                         book['id_in_shop'] = 3
                         return book
 """
-from Learning.base_api.base_api_models import BookIn, BookOut
+from Task_Manager.base_api.base_api_models import BookIn, BookOut
 
 
 @app.post('/book', response_model=BookOut)
