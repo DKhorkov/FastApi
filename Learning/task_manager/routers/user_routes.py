@@ -1,8 +1,7 @@
 import logging
 
-from fastapi import Request, Form, Depends, HTTPException, APIRouter
+from fastapi import Request, Form, HTTPException, APIRouter
 from fastapi.responses import HTMLResponse
-from fastapi.security import OAuth2PasswordRequestForm
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_303_SEE_OTHER
 from starlette.templating import Jinja2Templates
@@ -23,7 +22,7 @@ templates = Jinja2Templates(directory='./templates/task_manager')  # Указы�
 
 
 @user_router.post("/auth", name='auth', response_class=Optional[RedirectResponse | HTMLResponse])
-async def auth(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
+async def auth(request: Request, email: str = Form(default=None), password: str = Form(default=None)):
     """
         Функция получает email и пароль пользователя и проверяет, зарегистрирован ли пользователь с таким email-ом.
         Если пользователь зарегистрирован, идет проверка валидности введенного пароля.
@@ -31,29 +30,42 @@ async def auth(request: Request, form_data: OAuth2PasswordRequestForm = Depends(
         RedirectResponse, который перенаправляет пользователя на страницу с его задачами.
 
         :param request: Базовый запрос
-        :param form_data:  Email и password из HTML формы, валидирующиеся через OAuth2
+        :param email: Email пользователя
+        :param password: Пароль пользователя
 
         :return: RedirectResponse на страницу с задачами текущего пользователя
     """
     try:
-        user = await get_user_by_email(email=form_data.username)
+        if not email or not password:
+            return templates.TemplateResponse(
+                name="login.html",
+                context={'request': request,
+                         'app_name': Settings().app_name,
+                         'incorrect_creds': False,
+                         'empty_creds': True
+                         },
+                status_code=200,
+            )
 
+        user = await get_user_by_email(email=email)
         if not user:
             return templates.TemplateResponse(
                 name="login.html",
                 context={'request': request,
                          'app_name': Settings().app_name,
-                         'incorrect_creds': True
+                         'incorrect_creds': True,
+                         'empty_creds': False
                          },
                 status_code=200,
             )
 
-        if not validate_password(password=form_data.password, hashed_password=user.hashed_password):
+        if not validate_password(password=password, hashed_password=user.hashed_password):
             return templates.TemplateResponse(
                 name="login.html",
                 context={'request': request,
                          'app_name': Settings().app_name,
-                         'incorrect_creds': True
+                         'incorrect_creds': True,
+                         'empty_creds': False
                          },
                 status_code=200,
             )
@@ -121,7 +133,8 @@ def login(request: Request):
             name="login.html",
             context={'request': request,
                      'app_name': Settings().app_name,
-                     'incorrect_creds': False
+                     'incorrect_creds': False,
+                     'empty_creds': False
                      },
             status_code=200,
         )
@@ -143,7 +156,8 @@ def register(request: Request):
             name="register.html",
             context={'request': request,
                      'app_name': Settings().app_name,
-                     'user_exists': False
+                     'user_exists': False,
+                     'empty_creds': False
                      },
             status_code=200,
         )
@@ -154,7 +168,8 @@ def register(request: Request):
 
 
 @user_router.post("/process_register", response_class=Optional[RedirectResponse | HTMLResponse])
-async def process_register(request: Request, email=Form(...), username=Form(...), password=Form(...)):
+async def process_register(request: Request, email=Form(default=None), username=Form(default=None),
+                           password=Form(default=None)):
     """
         Функция обрабатывает входящие данные из HTML формы и создает пользователя в БД, если пользователя с таким же
         адресом электронной почты еще не зарегистрировано, после чего перенаправляет пользователя на страницу
@@ -168,6 +183,17 @@ async def process_register(request: Request, email=Form(...), username=Form(...)
         :return: RedirectResponse на страницу для авторизации (login)
     """
     try:
+        if not email or not password or not username:
+            return templates.TemplateResponse(
+                name="register.html",
+                context={'request': request,
+                         'app_name': Settings().app_name,
+                         'user_exists': False,
+                         'empty_creds': True
+                         },
+                status_code=200,
+            )
+
         db_user = await get_user_by_email(email=email)
         if db_user:
             logger.debug(f'User tried to register with email={email}, but user with those email is already exists!')
@@ -175,7 +201,8 @@ async def process_register(request: Request, email=Form(...), username=Form(...)
                 name="register.html",
                 context={'request': request,
                          'app_name': Settings().app_name,
-                         'user_exists': True
+                         'user_exists': True,
+                         'empty_creds': False
                          },
                 status_code=200,
             )

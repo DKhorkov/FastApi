@@ -50,7 +50,9 @@ async def tasks(request: Request, session: AsyncSession = Depends(get_async_sess
             name="tasks.html",  # Путь до шаблона
             context={'request': request,  # Context - данные, которые мы передаем в шаблон
                      'app_name': Settings().app_name,
-                     'tasks_list': all_tasks},
+                     'tasks_list': all_tasks,
+                     'empty_field': False
+                     },
             status_code=200,
         )
 
@@ -60,13 +62,14 @@ async def tasks(request: Request, session: AsyncSession = Depends(get_async_sess
 
 
 @db_router.post("/add", name='add', response_class=RedirectResponse)
-async def add(title: str = Form(..., description="Укажите описание заявки"),
+async def add(request: Request, title: str = Form(default=None, description="Укажите описание заявки"),
               session: AsyncSession = Depends(get_async_session),
               current_user: User = Depends(get_current_user)):
     """
         Функция получает название новой заявки, создает экземпляр модели заявки и сохраняет заявку в базу данных.
         Переадресовывает на домашнюю страницу.
 
+        :param request: Обязательный параметр запроса для нашей странички по аналогии с Django
         :param title: Обязательный параметр формы, для создания новой заявки
         :param session: Объект сессии из SQLAlchemy. В нее передаются зависимости нашей базы данных.
         :param current_user: Текущий пользователь, под которого будут выведены созданные им заявки
@@ -74,6 +77,21 @@ async def add(title: str = Form(..., description="Укажите описани�
         :return: Отрисованный HTML, созданный с помощью шаблонизатора Jinja2Templates
     """
     try:
+        if not title:
+            async with session as async_session:
+                all_tasks = await async_session.execute(select(Task).filter(Task.user_id == current_user.id))
+                all_tasks = all_tasks.scalars()
+
+            return templates.TemplateResponse(
+                name="tasks.html",  # Путь до шаблона
+                context={'request': request,  # Context - данные, которые мы передаем в шаблон
+                         'app_name': Settings().app_name,
+                         'tasks_list': all_tasks,
+                         'empty_field': True
+                         },
+                status_code=200,
+            )
+
         new_task = Task(title=title, user_id=current_user.id)
         async with session as async_session:
             async_session.add(new_task)

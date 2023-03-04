@@ -2,40 +2,49 @@
 
 {% block content %}
 
-<div style="margin-top: 50px;" class="ui container">
-
-    <nav class="logout">
-        <form class="ui form" action="{{ url_for('logout') }}" method="get">
-            <button class="ui olive button" type="submit">Выйти</button>
-        </form>
-    </nav>
-
-    <h1 class="ui center aligned header blue">Управление текущими задачами</h1>
-
-    <form class="ui form" action="{{ url_for('add') }}" method="post">
-        <h3 class="task">Оптимизируй своё время c Python</h3>
-        <div class="field">
-            <label>Новая задача</label>
-            <input type="text" name="title" placeholder="Введите название задачи"><br>
-        </div>
-        <button class="ui black button" type="submit">Добавить</button>
+<div class="ui container">
+    <form action="{{ url_for('logout') }}" method="get">
+        <button class="exit_button" type="submit">Выйти</button>
     </form>
+</div>
+
+
+<h1>Управление текущими задачами</h1>
+<h2>Оптимизируй своё время c Python</h2>
+
+<form action="{{ url_for('add') }}" method="post">
+    <label>Новая задача</label>
+    <input type="text" name="title" placeholder="Введите название задачи"><br>
+    {% if empty_field == True %}
+        <h3>Для создания задачи необходимо ввести ее описание! Пожалуйста, попробуйте снова!</h3>
+    {% endif %}
+    <button class="common_button zero_margin_top thirty_margin_bottom" type="submit">Добавить</button>
+</form>
 
 
     {% for task in tasks_list %}
     <div class="task_div">
-        <p class="ui big header">Задача: {{ task.title }}</p>
+        <div class="task_header">
+            <p class="task_description">Задача: {{ task.title }}</p>
+        </div>
 
         {% if task.is_complete == False %}
-        <span class="ui gray label">Не завершено</span>
-        <a class="ui primary button" href="{{ url_for('update', task_id=task.id) }}">Закрыть</a>
+        <span class="task_incomplete">Не завершено</span>
+
+        <div class="container-buttons">
+            <a class="update_button" href="{{ url_for('update', task_id=task.id) }}">Закрыть</a>
+        </div>
+
         {% else %}
-        <span class="ui green label">Завершено</span>
-        <a class="ui blue button" href="{{ url_for('update', task_id=task.id) }}">Открыть</a>
-        <a class="ui negative button" href="{{ url_for('delete', task_id=task.id) }}">Удалить</a>
+        <span class="task_complete">Завершено</span>
+
+        <div class="container-buttons">
+            <a class="update_button" href="{{ url_for('update', task_id=task.id) }}">Открыть</a>
+            <a class="delete_button" href="{{ url_for('delete', task_id=task.id) }}">Удалить</a>
+        </div>
         {% endif %}
     </div>
     {% endfor %}
-</div>
+
 
 {% endblock content %}

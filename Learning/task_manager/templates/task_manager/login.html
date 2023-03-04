@@ -3,28 +3,26 @@
 {% block content %}
 
 <div style="margin-top: 50px;" class="ui container">
-
-    <h1 class="ui center aligned header blue">Авторизация пользователя</h1>
-
-    {% if incorrect_creds == True %}
-     <div style="margin-top: 15px;" class="ui container">
-         <h3>Неправильно указан адрес электронной почты или пароль! Пожалуйста, попробуйте снова!</h3>
-     </div>
-    {% endif %}
-
-    <form class="ui form" action="{{ url_for('auth') }}" method="post">
-      <div class="field">
-        <input type="email" name="username" placeholder="Email"><br>
-      </div>
-      <div class="field">
-        <input type="password" name="password" placeholder="Password"><br>
-      </div>
-        <button class="ui black button" type="submit">Авторизоваться</button>
-    </form>
+    <h1 class="ui center aligned header black">Авторизация пользователя</h1>
 </div>
 
-<div style="margin-top: 15px;" class="ui container">
-    <a class="ui yellow button" href="{{ url_for('start') }}">На главную</a>
-</div>
+<form action="{{ url_for('auth') }}" method="post">
+    <input type="email" name="email" placeholder="Email"><br>
+    <input type="password" name="password" placeholder="Password"><br>
+    <div class="div_notification">
+        {% if empty_creds == True %}
+            <h3>Для авторизации необходимо ввести email и пароль! Пожалуйста, попробуйте снова!</h3>
+        {% endif %}
+        {% if incorrect_creds == True %}
+            <h3>Неправильно указан адрес электронной почты или пароль! Пожалуйста, попробуйте снова!</h3>
+        {% endif %}
+    </div>
+    <button class="common_button" type="submit">Авторизоваться</button>
+</form>
+
+
+<form action="{{ url_for('start') }}" method="get">
+    <button class="on_start_button" type="submit">На главную</button>
+</form>
 
 {% endblock content %}
